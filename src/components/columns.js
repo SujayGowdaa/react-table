@@ -5,7 +5,11 @@ export const columnsDef = [
     accessorKey: 'id', // Key to access the 'id' attribute in the data
     header: 'id', // Header text displayed for this column
   },
-
+  {
+    accessorFn: (value) => `${value.first_name} ${value.last_name}`,
+    header: 'full name', // Header text displayed for this column
+    cell: (value) => value.getValue().replace(' ', '-'), // the cell property is used to customize the rendering of individual cells within the table. It allows you to define how the content of each cell should be displayed based on the data in that cell. for eg: here we are replacing spaces with hyphens...
+  },
   {
     accessorKey: 'first_name', // Key to access the 'first_name' attribute in the data
     header: 'first name', // Header text displayed for this column
