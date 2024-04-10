@@ -5,7 +5,7 @@ export const columnsDef = [
     accessorKey: 'id', // Key to access the 'id' attribute in the data
     header: 'id', // Header text displayed for this column
   },
-  // Column for displaying the 'first_name' attribute
+
   {
     accessorKey: 'first_name', // Key to access the 'first_name' attribute in the data
     header: 'first name', // Header text displayed for this column
@@ -15,6 +15,7 @@ export const columnsDef = [
     accessorKey: 'last_name', // Key to access the 'last_name' attribute in the data
     header: 'last name', // Header text displayed for this column
   },
+
   // Column for displaying the 'email' attribute
   {
     accessorKey: 'email', // Key to access the 'email' attribute in the data
@@ -57,5 +58,14 @@ export const columnsDef2 = [
     })
   },
 ];
+
+*/
+
+/*
+  // Column for displaying the 'full name' merging data of first name and last name...
+  {
+    accessorFn: (value) => `${value.first_name} ${value.last_name}`,
+    header: 'full name', // Header text displayed for this column
+  },
 
 */
