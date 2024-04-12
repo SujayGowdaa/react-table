@@ -1,41 +1,49 @@
 import {
   useReactTable,
   flexRender,
+  getPaginationRowModel,
   getCoreRowModel,
 } from '@tanstack/react-table';
 import { tableData } from '../data/data';
 import { columnsDef } from '../components/columns';
-import React from 'react';
+import { useMemo, useState } from 'react';
 
 export default function Table() {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   // Memoize the table data using the useMemo hook
-  const data = React.useMemo(() => tableData, []);
+  const data = useMemo(() => tableData, []);
 
   // Memoize the column definitions using the useMemo hook
-  const column = React.useMemo(() => columnsDef, []);
+  const column = useMemo(() => columnsDef, []);
 
   // Create a table instance using the useReactTable hook
   const table = useReactTable({
     columns: column, // Define the columns for the table using the columnsDef array
     data: data, // Provide the data to be displayed in the table
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    state: { pagination },
   });
 
   return (
     <div>
       <table>
         <thead>
-          {table.getHeaderGroups().map((header) => {
+          {table.getHeaderGroups().map((headerGroup) => {
             return (
-              <tr key={header.id}>
-                {header.headers.map((column) => {
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
                   return (
-                    <th key={column.id}>
+                    <th key={header.id}>
                       {flexRender(
                         // Render the header of the column using the flexRender function
-                        column.column.columnDef.header,
+                        header.column.columnDef.header,
                         // Pass the context of the column to the flexRender function for rendering
-                        column.getContext()
+                        header.getContext()
                       )}
                     </th>
                   );
@@ -45,26 +53,46 @@ export default function Table() {
           })}
         </thead>
         <tbody>
-          {table.getCoreRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((row) => {
-                  return (
-                    <td key={row.id}>
-                      {flexRender(
-                        // Render the header of the column using the flexRender function
-                        row.column.columnDef.cell,
-                        // Pass the context of the column to the flexRender function for rendering
-                        row.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => {
+                return (
+                  <td key={cell.id}>
+                    {flexRender(
+                      // Render the header of the column using the flexRender function
+                      cell.column.columnDef.cell,
+                      // Pass the context of the column to the flexRender function for rendering
+                      cell.getContext()
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
         </tbody>
       </table>
+      <div>
+        <button onClick={() => table.setPageIndex(0)}>First</button>
+        <button
+          disabled={!table.getCanPreviousPage()}
+          onClick={() => table.previousPage()}
+        >
+          Previous
+        </button>
+        <button
+          disabled={!table.getCanNextPage()}
+          onClick={() => table.nextPage()}
+        >
+          Next
+        </button>
+        <button onClick={() => table.setPageIndex(table.getPageCount() - 1)}>
+          Last
+        </button>
+      </div>
+      <div>
+        Showing {table.getRowModel().rows.length.toLocaleString()} of{' '}
+        {table.getRowCount().toLocaleString()} Rows
+      </div>
     </div>
   );
 }
